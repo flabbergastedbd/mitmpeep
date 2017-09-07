@@ -13,7 +13,9 @@ from mitmpeep import HTTPSPeeper, Modes
 
 
 class ComplexFilteringPeep(HTTPSPeeper):
-    MODE = Modes.TAMPER
     def filter_request(self, request):
         # Do any complex filtering here and return True/False
         return(request.method == "POST" and request.urlencoded_form and "message" in list(request.urlencoded_form.keys()))
+
+def start():
+    return(ComplexFilteringPeep(mode=Modes.TAMPER))

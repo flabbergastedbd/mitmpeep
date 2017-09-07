@@ -32,9 +32,6 @@ class HTTPSPeeper(object):
     # If None, all the requests are logged
     URL_FILTER_REGEX = None
 
-    # Mode
-    _MODE = Modes.TAMPER
-
     # Logging configuration
     OUTPUT_DIR = "output"
     LOG_FILE = "mitmpeeper.log"
@@ -77,10 +74,11 @@ class HTTPSPeeper(object):
             self._MODE = value
             self.LOG_FLOWS = False
 
-    def __init__(self):
+    def __init__(self, mode=Modes.TAMPER):
         """Initialize the object.
         """
         self.__init_logging()
+        self.MODE = mode
 
     def __init_logging(self):
         """Initialize logging to a file.
@@ -147,8 +145,8 @@ class HTTPSPeeper(object):
         # First check modes
         if self.MODE == Modes.TAMPER or self.MODE == Modes.DIFFER:
             # If there is a tamper function and the request meets the filter
-            # Only tamper mode can tamper request here
-            if self.filter_request(flow.request):
+            # Only tamper mode can tamper request here and make sure it is not a replayed request
+            if self.filter_request(flow.request) and not flow.request.is_replay:
                 flow.request = self.tamper_request(flow.request)
 
     def response(self, flow):
@@ -176,7 +174,7 @@ class HTTPSPeeper(object):
                 # If this is an original request and not a replay
                 if not flow.request.is_replay:
                     # Create new flow, add old req-res to the new flow and replay
-                    flow = self.tnr_request(flow)
+                    self.tnr_request(flow)
                 else:
                     self.store_diff(
                         flow.mpeep_file_storage_path,
@@ -202,9 +200,8 @@ class HTTPSPeeper(object):
         new_flow.mpeep_old_response = flow.response
         new_flow.mpeep_file_storage_path = flow.mpeep_file_storage_path + "_tampered"
         ctx.master.view.add(new_flow)
-        self.tamper_for_replay(new_flow.request)
+        new_flow.request = self.tamper_for_replay(new_flow.request)
         ctx.master.replay_request(new_flow)
-        return(new_flow)
 
     def log_diff(self, old_req, new_req, old_res, new_res):
         """Log the diff to logger and return the diff lines

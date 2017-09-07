@@ -35,7 +35,6 @@ from mitmpeep import HTTPSPeeper, Modes
 
 
 class PrettyPeep(HTTPSPeeper):
-    MODE = Modes.TAMPER
     URL_FILTER_REGEX = "endpoint\?"  # A regex to filter interesting requests
 
     def stringify_request_body(self, item):
@@ -50,6 +49,9 @@ class PrettyPeep(HTTPSPeeper):
     def log_transaction(self, request, response):
         self.logger.info(self.stringify_request_body(request))
         return(super().log_transaction(request, response))
+
+def start():
+    return(PrettyPeep(mode=Modes.TAMPER))
 
 """
 This script will log
