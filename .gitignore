@@ -1,0 +1,12 @@
+*.pyc
+*.log
+.coverage
+/.venv
+/htmlcov
+
+# Setups tools
+/dist/
+/output/
+
+# Python egg metadata
+/*.egg-info
