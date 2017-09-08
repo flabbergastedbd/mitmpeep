@@ -1,6 +1,6 @@
 #!/usr/bib/env python
 """
-The idea behind this example is to ease the process of testing privilege
+The idea behind this example is to show the ease of testing privilege
 escalations or typically incorrect authorization. The manual way to test
 this is to repeat requests in burp and manually add a different account session's
 token. With the following script not only that functionality can be automated
@@ -37,7 +37,7 @@ This script will log
     + diff to the log file
     + the diff to a file $output_dir/<any_host>/super/oracle/<unique_hash>.diff.0
 
-Sample Log Output
+Sample Log Output (Having a look at the identifier and the response sizes give good picture)
 
 =================================================== Tamper N Replay ====================================================
 

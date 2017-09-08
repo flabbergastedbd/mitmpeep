@@ -36,10 +36,6 @@ def get_replayed_flow():
 
 
 class TamperRequest(HTTPSPeeper):
-    def __init__(self):
-        super().__init__()
-        self.MODE = Modes.TAMPER
-
     def tamper_request(self, request):
         request.headers["User-Agent"] = "User-Agent"
         return(request)
